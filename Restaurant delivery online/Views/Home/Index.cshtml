@@ -1,0 +1,148 @@
+﻿@model IEnumerable<City>
+
+@{
+    ViewData["Title"] = "Home Page";
+
+}
+
+<section>
+    <div class="block">
+        <div class="fixed-bg"></div>
+        <div class="restaurant-searching text-center">
+            <div class="restaurant-searching-inner">
+                <h2 itemprop="headline">Order <span>Food Online From</span> the Best Restaurants</h2>
+                <form class="restaurant-search-form brd-rd2" asp-controller="Restaurant" asp-action="SearchResults" method="get">
+                    <div class="row mrg10">
+                       @*  <div class="col-md-6 col-sm-5 col-lg-5 col-xs-12">
+                            <div class="input-field brd-rd2">
+                                <input class="brd-rd2" type="text" name="restaurantName" placeholder="Restaurant Name">
+                            </div>
+                        </div> *@
+                        <div class="col-md-9 col-sm-9 col-lg-9 col-xs-12">
+                            <div class="input-field brd-rd2">
+                                <i class="fa fa-map-marker"></i>
+                                <select class="brd-rd2" id="citySelect" name="cityId">
+                                    <option value="">Select City</option>
+                                    @if (Model != null)
+                                    {
+                                        foreach (var city in Model)
+                                        {
+                                            <option value="@city.CityId">@city.CityName</option>
+                                        }
+                                    }
+                                </select>
+                                <i class="fa fa-location-arrow"></i>
+                            </div>
+                        </div>                    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-12">
+                            <button id="searchButton" class="brd-rd2 red-bg" type="submit" >SEARCH</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="funfacts">
+                    <div class="col-md-3 col-sm-6 col-lg-3">
+                        <div class="fact-box">
+                            <i class="brd-rd50">
+                                <img src="~/assets/images/resource/fact-icon1.png" alt="fact-icon1" itemprop="image">
+                            </i>
+                            <div class="fact-inner">
+                                <strong><span class="counter">137</span></strong>
+                                <h5>Restaurant</h5>
+                            </div>
+                        </div><!-- Fact Box -->
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-lg-3">
+                        <div class="fact-box">
+                            <i class="brd-rd50">
+                                <img src="~/assets/images/resource/fact-icon2.png" alt="fact-icon2" itemprop="image">
+                            </i>
+                            <div class="fact-inner">
+                                <strong><span class="counter">158</span></strong>
+                                <h5>People Served</h5>
+                            </div>
+                        </div><!-- Fact Box -->
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-lg-3">
+                        <div class="fact-box">
+                            <i class="brd-rd50">
+                                <img src="~/assets/images/resource/fact-icon3.png" alt="fact-icon3" itemprop="image">
+                            </i>
+                            <div class="fact-inner">
+                                <strong><span class="counter">659</span>K</strong>
+                                <h5>Happy Service</h5>
+                            </div>
+                        </div><!-- Fact Box -->
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-lg-3">
+                        <div class="fact-box">
+                            <i class="brd-rd50">
+                                <img src="~/assets/images/resource/fact-icon4.png" alt="fact-icon4" itemprop="image">
+                            </i>
+                            <div class="fact-inner">
+                                <strong><span class="counter">235</span></strong>
+                                <h5>Regular users</h5>
+                            </div>
+                        </div><!-- Fact Box -->
+                    </div>
+                </div><!-- Fun Facts -->
+            </div>
+            <img class="left-scooty-mockup easein" src="~/assets/images/resource/restaurant-mockup1.png" alt="restaurant-mockup1.png" itemprop="image">
+            <img class="bottom-clouds-mockup" src="~/assets/images/resource/clouds.png" alt="clouds.png" itemprop="image">
+        </div><!-- Restaurant Searching -->
+    </div>
+</section>
+<style>
+    .fixed-bg{
+        background-image: url('@Url.Content("~/assets/images/topbg.jpg")');
+        background-image: url('@Url.Content("~/assets/images/topbg.jpg")');
+        background-size: cover;
+        background-position: center;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .bottom-clouds-mockup {
+        bottom: 0px !important;
+
+    }
+    .input-field select {
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        height: 100%;
+        padding: 15px 38px;
+        font-size: 11.7px;
+        font-family: lato;
+        color: #a2a2a2;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+        .input-field select:focus {
+            outline: none;
+        }
+
+    .left-scooty-mockup.easein {
+        bottom: 0 !important;
+       
+    }
+</style>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const citySelect = document.getElementById("citySelect");
+            const searchButton = document.getElementById("searchButton");
+
+            function updateButtonState() {
+
+                searchButton.disabled = citySelect.value === "";
+            }
+            citySelect.value = "";
+
+            updateButtonState();
+
+
+            citySelect.addEventListener("change", updateButtonState);
+        });
+    </script>
+}

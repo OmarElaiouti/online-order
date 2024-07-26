@@ -1,0 +1,440 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+    var Items = ViewBag.ItemsDetails as List<MenuItem>;
+}
+
+<div class="container mt-4">
+    <!-- Customer Data Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="font-weight-bold">Your Data</h2>
+            <hr class="custom-hr" />
+        </div>
+        <div class="col-md-3 mb-3 d-flex">
+            <div class="me-3"> <i class="fa fa-user fa-2x text-warning"></i></div>
+            <span><strong>Name</strong><br />@ViewBag.CustomerName</span>
+        </div>
+        <div class="col-md-3 mb-3 d-flex">
+            <div class="me-3">
+                <i class="fa fa-phone fa-2x text-warning"></i>
+            </div>
+            <span><strong>Phone</strong><br />@ViewBag.CustomerPhone</span>
+        </div>
+        <div class="col-md-3 mb-3 d-flex">
+            <div class="me-3">
+                <i class="fa fa-envelope fa-2x text-warning"></i>
+            </div>
+            <span><strong>E-mail</strong><br />@ViewBag.CustomerEmail</span>
+        </div>
+        <div class="col-md-3 mb-3 d-flex">
+            <div class="me-3">
+                <i class="fa fa-map-marker fa-2x text-warning"></i>
+            </div>
+            <span><strong>Address</strong><br />@ViewBag.CustomerAddress</span>
+        </div>
+    </div>
+
+    <!-- Order Details Section -->
+    <div class="table-responsive mt-5 mb-5" >
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th class="text-center">Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Items)
+                {
+                    <tr class="data-raw" data-item-id="@item.MenuItemId" data-restaurant-id="@item.RestaurantId">
+                        <td class="align-items-center td-img">
+                            <img src="~/@item.MenuItemImage" alt="Product Image" class="img-fluid item-img" width="50" />
+                        </td>
+                        <td>
+                            <span class="ml-3">@item.Name</span>
+                        </td>
+                        <td>$@item.Price</td>
+                        <td class="align-items-center ">
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-light btn-sm">-</button>
+                                <input type="text" class="form-control form-control-sm mx-2 text-center" readonly value="1" style="width: 40px;" />
+                                <button class="btn btn-light btn-sm">+</button>
+                            </div>
+                        </td>
+                        <td>$@item.Price</td>
+                        <td><button class="btn btn-danger btn-sm remove-item">&times;</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Total Section -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="bg-white p-3 rounded border">
+                <table class="table table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <th class="total-label text-left">Total</th>
+                            <td class="total-label"></td>
+                        </tr>
+                        <tr>
+                            <th class="text-left">Subtotal</th>
+                            <td id="total" class="total-value text-right">$@Items.Sum(item => item.Price)</td>
+                        </tr>
+                        <tr>
+                            <th class="text-left">Total</th>
+                            <td id="subtotal" class="total-value text-right">$@Items.Sum(item => item.Price)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-between mt-3">
+                  
+                    <a href="@Url.Action("Confirm", "Order")" class="btn btn-warning">Back</a>
+
+                    <button id="confirmOrder" class="btn btn-warning">CHECKOUT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<<!-- receipt Modal -->
+<div class="modal" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content brd-rd5">
+            <div class="modal-header">
+                <h5 class="modal-title" id="receiptModalLabel">Receipt Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="receipt-details text-center">
+                    <h4>Your Order Receipt</h4>
+                    <p id="receiptContent">Loading receipt details...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+
+    .row > * {
+        padding-right: calc(var(--bs-gutter-x)) !important;
+        padding-left: calc(var(--bs-gutter-x)) !important;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .item-img{
+        height: 100% ;
+    }
+    .text-warning {
+        color: #ffc107 !important;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+
+    .table input[type="text"] {
+        text-align: center; /* Center the text inside the input */
+        max-width: 100px; /* Set maximum width */
+    }
+
+    .table td {
+        vertical-align: middle; /* Center content vertically */
+    }
+    .table tbody td {
+        vertical-align: middle;
+    }
+
+    .td-img{
+        height: 7rem;
+    }
+
+    .table tbody button {
+        border: none;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .btn-light {
+        border: 1px solid #ddd;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+    .btn-danger {
+        background-color: transparent;
+        color: #dc3545;
+    }
+
+        .btn-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+    .bg-white {
+        background-color: #fff;
+    }
+
+    .border {
+        border: 1px solid #dee2e6;
+    }
+
+    .table > tbody > tr > td,
+    .table > tbody > tr > th {
+        border-bottom: 1px solid #ddd;
+        border-top: none;
+    }
+
+    .total-label {
+        border-bottom: none !important;
+    }
+
+    .custom-hr {
+        border: none !important;
+        border-top: 5px solid #ffc107 !important;
+        width: 4rem;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .modal-body {
+        text-align: left;
+        font-family: 'Courier New', Courier, monospace; /* Use a monospaced font for a receipt look */
+    }
+
+    .receipt-items {
+        margin-top: 20px;
+    }
+
+        .receipt-items table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .receipt-items th, .receipt-items td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .receipt-items th {
+            background-color: #f8f9fa;
+        }
+
+        .receipt-items td {
+            font-size: 0.9rem;
+        }
+
+    .modal-footer {
+        background-color: #f8f9fa;
+    }
+
+    .btn-close {
+        background-color: #f8f9fa;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+     .receipt-items {
+        font-size: 0.9rem;
+    }
+
+    /*     .receipt-items th, .receipt-items td {
+            border: 1px solid #ddd;
+        }
+            */
+        .table-borderless {
+    border-collapse: collapse;
+}
+
+        .table-borderless > tbody > tr > td,
+        .table-borderless > tbody > tr > th {
+    border: none !important;
+} 
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+
+    
+
+    $(document).ready(function () {
+
+       
+        var receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
+
+     
+
+        $('.btn-light').on('click', function () {
+            var $input = $(this).siblings('input');
+            var currentValue = parseInt($input.val());
+            if ($(this).text() === '+') {
+                $input.val(currentValue + 1);
+            } else if ($(this).text() === '-' && currentValue > 1) {
+                $input.val(currentValue - 1);
+            }
+            updateTotals();
+        });
+        $('.remove-item').on('click', function () {
+            $(this).closest('tr').remove();
+            updateTotals();
+        });
+
+        function updateTotals() {
+            var subtotal = 0;
+            var $rows = $('.data-raw');
+
+            // Check if there are any rows
+            if ($rows.length === 0) {
+                $('#confirmOrder').prop('disabled', true); // Disable the checkout button
+                $('#subtotal').text('$0.00');
+                $('#total').text('$0.00');
+                return;
+            } else {
+                $('#confirmOrder').prop('disabled', false); // Enable the checkout button
+            }
+
+            $rows.each(function () {
+                var priceText = $(this).find('td').eq(2).text().replace('$', '').trim();
+                var quantity = parseInt($(this).find('input').val());
+
+                var price = parseFloat(priceText);
+                if (isNaN(price)) {
+                    price = 0;
+                }
+                if (isNaN(quantity) || quantity <= 0) {
+                    quantity = 1;
+                }
+
+                var total = price * quantity;
+                $(this).find('td').eq(4).text('$' + total.toFixed(2));
+                subtotal += total;
+            });
+
+            $('#subtotal').text('$' + subtotal.toFixed(2));
+            $('#total').text('$' + subtotal.toFixed(2));
+        }
+
+
+        $('#confirmOrder').on('click', function () {
+            var orderItems = [];
+            $('.data-raw').each(function () {
+                var itemId = $(this).data('item-id');
+                var quantity = parseInt($(this).find('input').val());
+                var price = parseFloat($(this).find('td').eq(2).text().replace('$', ''));
+                orderItems.push({
+                    MenuItemId: itemId,
+                    Quantity: quantity,
+                    TotalPrice: price * quantity
+                });
+            });
+
+            var order = {
+                
+                CustomerName: '@ViewBag.CustomerName',
+                CustomerEmail: '@ViewBag.CustomerEmail',
+                CustomerPhone: '@ViewBag.CustomerPhone',
+                CustomerAddress: '@ViewBag.CustomerAddress',
+                OrderItems: orderItems
+            };
+            console.log(order.OrderItems)
+            $.ajax({
+                url: '/Order/SubmitOrder', 
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(order),
+                success: function (response) {
+                    if (response.success) {
+                        $('#confirmOrder').prop('disabled', true);
+                        if (response.customerName && response.orderId && response.totalAmount && response.orderItems) {
+                            receiptContent += '<h4 >Thank you!</h4>';
+                            var receiptContent = '<div class="text-left">';
+                            receiptContent += '<div><strong>Customer:</strong> ' + response.customerName + '</div>';
+                            receiptContent += '<div><strong>Order ID:</strong> ' + response.orderId + '</div>';
+                            receiptContent += '<div><strong>Time:</strong> ' + new Date().toLocaleString() + '</div>'; // Display current date and time
+                            receiptContent += '<hr />';
+                            receiptContent += '<div class="receipt-items">';
+                            receiptContent += '<table class="table table-borderless">';
+                            receiptContent += '<thead><tr><th>Item</th><th>Price</th><th>Quantity</th><th>Total</th><th>Restaurant</th></tr></thead>';
+                            receiptContent += '<tbody>';
+
+                            // Iterate through the items and add them to the receipt
+                            response.orderItems.forEach(function (item) {
+                                receiptContent += '<tr>';
+                                receiptContent += '<td>' + item.menuItemName + '</td>';
+                                receiptContent += '<td>$' + item.menuItemPrice + '</td>';
+                                receiptContent += '<td>' + item.quantity + '</td>';
+                                receiptContent += '<td>$' + item.totalPrice + '</td>';
+                                receiptContent += '<td>' + item.restaurantName + '</td>';
+                                receiptContent += '</tr>';
+                            });
+
+                            receiptContent += '</tbody>';
+                            receiptContent += '</table>';
+                            receiptContent += '<hr />';
+                            receiptContent += '<p><strong>Total Amount: $' + response.totalAmount + '</strong></p>';
+                            receiptContent += '<div class="text-left">';
+                            receiptContent += '<p >Your order will arrive as soon as possible.</p>';
+                            receiptContent += '</div>';
+                            receiptContent += '</div>';
+                            receiptContent += '</div>';
+
+                            // Update modal content and show the modal
+                            $('#receiptContent').html(receiptContent);
+                        }
+                        receiptModal.show();
+                    }
+                    else {
+                        alert('Error saving order. Please try again.');
+                    }
+                },
+                error: function () {
+                    alert('Error saving order. Please try again.');
+                }
+            });
+        });
+
+        $('#receiptModal').on('hidden.bs.modal', function () {
+            window.location.href = '/Home/Index'; // Redirect to Home/Index
+        });
+    });
+</script>

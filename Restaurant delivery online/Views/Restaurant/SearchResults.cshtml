@@ -1,0 +1,223 @@
+﻿@model IEnumerable<Restaurant>
+
+@{
+    ViewData["Title"] = "Restaurants";
+    var firstRestaurantCity = Model.Any() ? Model.First().CityName : "Searched Area";
+}
+
+<section>
+    <div class="block2">
+        <div class="fixed-bg" style="background-image: url(@Url.Content("~/assets/images/topbg.jpg"));background-size: cover;"></div>
+        <div class="page-title-wrapper text-center">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+                <div class="page-title-inner">
+                    <h1 itemprop="headline">Search Found</h1>
+                    <span>A Great Restaurant Website</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="block">
+    <section>
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-sm-12 col-lg-9">
+                <div class="title2-wrapper text-center">
+                    <h3 class="marginb-0" itemprop="headline">Order food online in @firstRestaurantCity</h3>
+                </div>
+                <div class="remove-ext" style="
+                     width: 100%;">
+                    <div class="row" id="restaurant-list">
+                        @if (Model.Any())
+                    {
+                        @foreach (var restaurant in Model)
+                        {
+                            <div class="col-md-4 col-sm-6 col-lg-4 restaurant-item">
+
+                                <div class="featured-restaurant-box with-bg style2 brd-rd12 "  style="visibility: visible; ">
+                                    <div class="featured-restaurant-thumb">
+                                        <a href="#" title="" itemprop="url"><img class="restaurant-image" src="~/@restaurant.RestaurantImage" alt="@restaurant.Name" itemprop="image"></a>
+                                    </div>
+                                    <div class="d-block">
+                                         <div class="featured-restaurant-info">
+                                        <span class="red-clr">@restaurant.CityName</span>
+                                        <h4 itemprop="headline"><a href="#" title="" itemprop="url">@restaurant.Name</a></h4>
+                                        <span class="food-types">Type of food: <a href="#" title="" itemprop="url">Apple Juice</a>, <a href="#" title="" itemprop="url">BB.Q</a></span>
+                                        <ul class="post-meta">
+                                            <li><i class="fa fa-check-circle-o"></i> Min order $50</li>
+                                            <li><i class="flaticon-transport"></i> 30min</li>
+                                            <li><i class="flaticon-money"></i> Accepts cash &amp; online payments</li>
+                                        </ul>
+                                        <span class="post-rate yellow-bg brd-rd2"><i class="fa fa-star-o"></i> 4.25</span>
+                                        <span class="post-likes style2 red-clr"><i class="fa fa-heart-o"></i> 12</span>
+                                        <a class="brd-rd30" asp-controller="Menu" asp-action="Index" asp-route-restaurantId="@restaurant.RestaurantId" title="See the menu"><i class="fa fa-angle-double-right"></i>MENU</a>
+                                    </div>
+                                    </div>
+                                </div><!-- Featured Restaurant Box -->
+                            </div>
+                        }
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                <p>No restaurants found in this city.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!-- Buttons and Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-5">
+                    <div class="pagination-wrapper text-center mt-4 flex-grow-1">
+                        <ul class="pagination justify-content-center" id="pagination">
+                            <!-- Pagination buttons will be generated here by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-process d-none d-lg-block col-1" id="back-btn">Back</a>
+
+                <div class="d-flex justify-content-center align-items-center mt-5">
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-process d-block d-lg-none w-50" id="back-btn">Back</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .title2-wrapper {
+        margin-bottom: 30px; 
+    }
+
+    .featured-restaurant-box {
+        margin-bottom: 20px;
+        animation-delay: unset !important;
+        animation-name: none !important;
+    }
+
+    .featured-restaurant-thumb{
+        display: block !important;
+        width: 100% !important;
+        height: 30rem !important;
+        padding: 0 !important;
+        margin: 2rem 0 !important;
+        text-align: center;
+        align-content: center;
+    }
+
+    .restaurant-image"{
+        width:100%;
+        height:100%;
+    }
+
+    .fixed-bg {
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    
+
+    .page-item:first-child .page-link,
+    .page-item:last-child .page-link {
+        width:8rem !important;
+    }
+
+
+    .btn-process {
+        background-color: #ea1b25; /* Red background color */
+        color: #fff; /* White text color */
+        border: 1px solid #ea1b25; /* Red border to match background */
+        padding: 0.5rem 1rem; /* Padding to match pagination buttons */
+        text-align: center; /* Center text */
+        display: inline-block; /* Inline block to align correctly */
+        text-decoration: none; /* Remove underline from links */
+    }
+
+        .btn-process:hover {
+            background-color: #fff; /* White background on hover */
+            color: #ea1b25; /* Red text color on hover */
+            border-color: #ea1b25; /* Red border on hover */
+        }
+
+        .btn-process:disabled {
+            background-color: #c0c0c0; /* Gray background for disabled state */
+            border-color: #c0c0c0; /* Gray border for disabled state */
+            color: #6c757d; /* Gray text color for disabled state */
+            cursor: not-allowed !important; /* Change cursor to indicate disabled */
+        }
+
+        .btn-process:focus {
+            outline: none !important; /* Remove default focus outline */
+        }
+
+        .pagination > li.prev a{
+            padding:0;
+        }
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const itemsPerPage = 3; // Number of items to display per page
+        const restaurantList = document.querySelectorAll('.restaurant-item');
+        const pagination = document.getElementById('pagination');
+        let currentPage = 1;
+
+        function displayPage(page) {
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            restaurantList.forEach((item, index) => {
+                if (index >= start && index < end) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            updatePagination(page);
+        }
+
+        function updatePagination(page) {
+            pagination.innerHTML = '';
+
+            const totalPages = Math.ceil(restaurantList.length / itemsPerPage);
+
+            if (page > 1) {
+                pagination.innerHTML += `<li class="page-item prev"><a class="page-link brd-rd2" href="#" data-page="${page - 1}">PREVIOUS</a></li>`;
+            } else {
+                pagination.innerHTML += `<li class="page-item prev disabled"><span class="page-link brd-rd2">PREVIOUS</span></li>`;
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === page) {
+                    pagination.innerHTML += `<li class="page-item active"><span class="page-link brd-rd2">${i}</span></li>`;
+                } else {
+                    pagination.innerHTML += `<li class="page-item"><a class="page-link brd-rd2" href="#" data-page="${i}">${i}</a></li>`;
+                }
+            }
+
+            if (page < totalPages) {
+                pagination.innerHTML += `<li class="page-item next"><a class="page-link brd-rd2" href="#" data-page="${page + 1}">NEXT</a></li>`;
+            } else {
+                pagination.innerHTML += `<li class="page-item next disabled"><span class="page-link brd-rd2">NEXT</span></li>`;
+            }
+        }
+
+        pagination.addEventListener('click', function (e) {
+           
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const page = parseInt(e.target.getAttribute('data-page'));
+                if (page && page !== currentPage) {
+                    currentPage = page;
+                    displayPage(currentPage);
+                }
+            }
+        });
+
+        displayPage(currentPage);
+    });
+</script>

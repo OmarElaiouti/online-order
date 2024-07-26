@@ -1,0 +1,277 @@
+﻿@model IEnumerable<MenuItem>
+
+@{
+    ViewData["Title"] = "Menu Items";
+    var restaurantId = ViewBag.RestaurantId;
+    var city = ViewBag.City;
+}
+
+<section>
+    <div class="block2">
+        <div class="fixed-bg" style="background-image: url('@Url.Content("~/assets/images/topbg.jpg")');background-size: cover;"></div>
+        <div class="page-title-wrapper text-center">
+            <div class="col-md-12 col-sm-12 col-lg-12">
+                <div class="page-title-inner">
+                    <h1 itemprop="headline">Our Menu</h1>
+                    <span>A Great Restaurant Website</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="block">
+    <section>
+        <div class="container">
+            <form id="menu-form" method="post" action="@Url.Action("Confirm", "Order")">
+                <input type="hidden" name="RestaurantId" value="@restaurantId">
+                <div class="row" id="menu-items">
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-md-4 col-sm-6 col-lg-4 restaurant-item">
+                                <div class="popular-dish-box style2">
+                                    <div class="popular-dish-thumb">
+                                        <a href="food-detail.html" title="" itemprop="url">
+                                            <img src="~/@item.MenuItemImage" alt="@item.Name" itemprop="image">
+                                        </a>
+                                    </div>
+                                    <div class="popular-dish-info">
+                                        <h4 itemprop="headline">
+                                            <a href="" title="" itemprop="url">@item.Name</a>
+                                        </h4>
+                                        <p itemprop="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
+                                        <span class="price">$@item.Price</span>
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" name="selectedItems" value="@item.MenuItemId" id="item-@item.MenuItemId">
+                                            <label for="item-@item.MenuItemId">Choose this item</label>
+                                        </div>
+                                    </div>
+                                </div><!-- Popular Dish Box -->
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                       <div class="text-center">
+                        <p>No menu items found for this restaurant.</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Buttons and Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="pagination-wrapper text-center mt-4">
+                        <ul class="pagination justify-content-center" id="pagination">
+                            <!-- Pagination buttons will be generated here by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="d-flex  justify-content-between align-items-center w-100 mt-3">
+                    <a asp-action="SearchResults" asp-controller="Restaurant" asp-route-cityId="@city" class="btn btn-process mb-5" id="back-btn-sm">Back</a>
+                    <button type="submit" class="btn btn-process mb-5" id="continue-order-btn" disabled>Continue</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const itemsPerPage = 9; // Number of items to display per page
+            const menuItems = $('#menu-items .restaurant-item');
+            const pagination = $('#pagination');
+            const continueButton = $('#continue-order-btn');
+            let currentPage = 1;
+
+            function displayPage(page) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+
+                menuItems.each((index, item) => {
+                    if (index >= start && index < end) {
+                        $(item).show();
+                    } else {
+                        $(item).hide();
+                    }
+                });
+
+                updatePagination(page);
+            }
+
+            function updatePagination(page) {
+                pagination.empty();
+
+                const totalPages = Math.ceil(menuItems.length / itemsPerPage);
+
+                if (page > 1) {
+                    pagination.append(`<li class="page-item prev"><a class="page-link brd-rd2" href="#" data-page="${page - 1}">PREVIOUS</a></li>`);
+                } else {
+                    pagination.append(`<li class="page-item prev disabled"><span class="page-link brd-rd2">PREVIOUS</span></li>`);
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === page) {
+                        pagination.append(`<li class="page-item active"><span class="page-link brd-rd2">${i}</span></li>`);
+                    } else {
+                        pagination.append(`<li class="page-item"><a class="page-link brd-rd2" href="#" data-page="${i}">${i}</a></li>`);
+                    }
+                }
+
+                if (page < totalPages) {
+                    pagination.append(`<li class="page-item next"><a class="page-link brd-rd2" href="#" data-page="${page + 1}">NEXT</a></li>`);
+                } else {
+                    pagination.append(`<li class="page-item next disabled"><span class="page-link brd-rd2">NEXT</span></li>`);
+                }
+            }
+
+            function toggleContinueButton() {
+                if ($('#menu-items input[type="checkbox"]:checked').length > 0) {
+                    continueButton.prop('disabled', false);
+                } else {
+                    continueButton.prop('disabled', true);
+                }
+            }
+
+            pagination.on('click', 'a', function (e) {
+                e.preventDefault();
+                const page = parseInt($(this).data('page'));
+                if (page && page !== currentPage) {
+                    currentPage = page;
+                    displayPage(currentPage);
+                }
+            });
+
+            $('#menu-items').on('change', 'input[type="checkbox"]', function () {
+                toggleContinueButton();
+            });
+
+            displayPage(currentPage);
+            toggleContinueButton();
+        });
+
+    </script>
+}
+
+<style>
+    .fixed-bg {
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .pagination-wrapper {
+        margin-top: 30px;
+    }
+
+    .page-item:first-child .page-link,
+    .page-item:last-child .page-link {
+        width: 8rem !important;
+    }
+
+    .featured-restaurant-box {
+        margin-bottom: 20px;
+        animation-delay: unset !important;
+        animation-name: none !important;
+    }
+    .btn-process {
+        background-color: #ea1b25; /* Red background color */
+        color: #fff; /* White text color */
+        border: 1px solid #ea1b25; /* Red border to match background */
+        padding: 0.5rem 1rem; /* Padding to match pagination buttons */
+        text-align: center; /* Center text */
+        display: inline-block; /* Inline block to align correctly */
+        text-decoration: none; /* Remove underline from links */
+    }
+
+        .btn-process:hover {
+            background-color: #fff; /* White background on hover */
+            color: #ea1b25; /* Red text color on hover */
+            border-color: #ea1b25; /* Red border on hover */
+        }
+
+        .btn-process:disabled {
+            background-color: #c0c0c0; /* Gray background for disabled state */
+            border-color: #c0c0c0; /* Gray border for disabled state */
+            color: #6c757d; /* Gray text color for disabled state */
+            cursor: not-allowed !important; /* Change cursor to indicate disabled */
+        }
+
+        .btn-process:focus {
+            outline: none !important; /* Remove default focus outline */
+        }
+
+    .popular-dish-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Style the label and checkbox container */
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin-top: 10px; /* Add some space between the checkbox and other elements */
+    }
+
+        /* Hide default checkbox appearance */
+        .checkbox-container input[type="checkbox"] {
+            display: none;
+        }
+
+        /* Custom checkbox styles */
+        .checkbox-container label {
+            position: relative;
+            display: flex;
+            align-items: center;
+            font-size: 16px; /* Adjust font size if needed */
+            cursor: pointer;
+        }
+
+            /* Custom checkbox square */
+            .checkbox-container label::before {
+                content: '';
+                width: 24px; /* Size of the checkbox square */
+                height: 24px; /* Size of the checkbox square */
+                border: 2px solid #ea1b25; /* Border color */
+                background-color: #fff; /* Background color */
+                border-radius: 4px; /* Rounded corners */
+                display: inline-block;
+                margin-right: 8px; /* Space between the checkbox and label text */
+                transition: background-color 0.3s, border-color 0.3s;
+            }
+
+        /* Checkmark styles */
+        .checkbox-container input[type="checkbox"]:checked + label::before {
+            background-color: #ea1b25; /* Background color when checked */
+            border-color: #ea1b25; /* Border color when checked */
+        }
+
+        /* Checkmark symbol */
+        .checkbox-container label::after {
+            content: '';
+            position: absolute;
+            left: 6px; /* Adjust to align the checkmark */
+            top: 2px;
+            width: 10px;
+            height: 16px;
+            border: solid #fff; /* Checkmark color */
+            border-width: 0 2px 2px 0; /* Checkmark border width */
+            transform: rotate(45deg); /* Rotate to create the checkmark */
+            opacity: 0; /* Hide by default */
+            transition: opacity 0.3s;
+        }
+
+        /* Show checkmark when checkbox is checked */
+        .checkbox-container input[type="checkbox"]:checked + label::after {
+            opacity: 1; /* Show checkmark when checked */
+        }
+
+    .pagination > li.prev a {
+        padding: 0;
+    }
+</style>

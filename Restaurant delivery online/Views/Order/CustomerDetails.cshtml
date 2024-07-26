@@ -1,0 +1,131 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Customer Details";
+    var restaurantId = TempData["restaurantId"];
+}
+
+<div class="container wrapper mt-4">
+    <div class="row align-items-center">
+        <!-- Form Container -->
+        <div class="form-container col-md-8 mb-4">
+            <div class="bg-white p-4 rounded w-100">
+                <h2 class="mb-4">Reserve Now</h2>
+                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa cum sociis natoque penatibus magnis dis.</p>
+                <form asp-action="CustomerDetails" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <input asp-for="CustomerName" class="form-control custom-input" placeholder="Name" />
+                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="CustomerPhone" class="form-control custom-input" placeholder="Phone" />
+                            <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <input asp-for="CustomerEmail" class="form-control custom-input" placeholder="Email" />
+                            <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input asp-for="CustomerAddress" class="form-control custom-input" placeholder="Address" />
+                            <span asp-validation-for="CustomerAddress" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!-- Hidden fields for menu items -->
+                    <input name="selectedMenuItems" type="hidden" id="menuItems" />
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-controller="Menu" asp-action="Index" asp-route-restaurantId="@restaurantId" class="btn btn-warning custom-button">BACK</a>
+                        <button type="submit" class="btn btn-warning custom-button">CONFIRM</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Special Container -->
+        <div class="special-container col-md-4 mb-4">
+            <div class="bg-white p-4 rounded border border-warning w-100">
+                <h3 class="text-warning">Today's Special</h3>
+                <h4>Caesar Salad</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                <img src="~/assets/images/resource/restaurant-detail-big-img1-2.jpg" alt="Special dish image" class="img-fluid rounded" />
+                <h4>$12.00</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // Retrieve selected items from TempData
+            var selectedMenuItems = @Html.Raw(TempData["SelectedItems"] ?? "[]");
+
+            // Populate the hidden input field with the selected items
+            $("#menuItems").val(JSON.stringify(selectedMenuItems));
+
+            console.log($("#menuItems").val())
+        });
+    </script>
+}
+
+<style>
+    .wrapper {
+        min-height: 100vh; /* Ensure the row takes up at least the full viewport height */
+        display: flex;
+        align-items: center; /* Center vertically */
+        margin-top: 0 !important;
+    }
+
+    .form-container, .special-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center contents vertically within each container */
+    }
+
+        .form-container h2, .special-container h3 {
+            font-family: 'Brush Script MT', cursive;
+        }
+
+    /* Override Bootstrap styles */
+    .custom-input {
+        border-radius: 0; /* Remove border radius for squared corners */
+        padding-right: 2.5rem; /* Space for the icon */
+    }
+
+    .input-icon {
+        right: 0;
+        background-color: black;
+        color: white;
+        border-radius: 0.25rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* Ensure form container takes full height of its row for centering */
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 100%;
+    }
+
+    .custom-input {
+        padding-right: 1.5rem; /* Reduce padding for smaller screens */
+    }
+
+    .text-danger {
+        font-size: 0.875em;
+        color: #dc3545; /* Red color for error messages */
+        margin-top: 0.25rem;
+    }
+</style>
